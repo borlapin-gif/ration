@@ -1,6 +1,6 @@
 {
-  "name": "Рацион",
-  "short_name": "Рацион",
+  "name": "LifeBite",
+  "short_name": "LifeBite",
   "description": "Меню на неделю под ваши нормы: белок, калории, вода, список покупок.",
   "start_url": "./",
   "scope": "./",

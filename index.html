@@ -9,11 +9,11 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<meta name="apple-mobile-web-app-title" content="Рацион">
+<meta name="apple-mobile-web-app-title" content="LifeBite">
 <meta name="theme-color" content="#F2F5F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0F1613" media="(prefers-color-scheme: dark)">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Рацион</title>
+<title>LifeBite</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap">
 <style>
 /* Layout: one-column phone app, 480px max, sticky header, fixed bottom tab bar; cards only for things you tap. */
@@ -114,6 +114,19 @@ nav.tabs .in{max-width:480px;margin:0 auto;display:grid;grid-template-columns:re
 nav.tabs button{border:0;background:transparent;border-radius:10px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted);min-height:48px}
 nav.tabs button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 nav.tabs button.on{color:var(--accent);font-weight:600;background:var(--accent-soft)}
+.thumb{width:52px;height:52px;border-radius:12px;flex:none;display:grid;place-items:center;overflow:hidden;background:var(--accent-soft);color:var(--accent)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.thumb.fish{background:var(--water-soft);color:var(--water)}.thumb.meat{background:var(--iron-soft);color:var(--iron)}.thumb.dairy,.thumb.dessert{background:var(--kcal-soft);color:var(--kcal)}
+.thumb.sm{width:36px;height:36px;border-radius:9px}.thumb.sm svg{width:20px;height:20px}
+.thumb.hero{width:100%;height:150px;border-radius:14px}.thumb.hero svg{width:56px;height:56px}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--surface);color:var(--fg);width:100%;max-width:480px;max-height:88%;overflow:auto;border-radius:18px 18px 0 0;padding:16px max(16px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.sheet h3{margin:12px 0 4px;font-size:18px}
+.sheet .ing{display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--line);font-size:14px}
+.sheet .ing span:last-child{color:var(--muted);font-variant-numeric:tabular-nums}
+.addrow{display:flex;gap:8px}.addrow input{flex:1;min-width:0}
+.lim{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line);font-size:14px}.lim input{width:64px;text-align:center}
 .note{border-left:3px solid var(--accent);padding:8px 12px;background:var(--accent-soft);border-radius:0 10px 10px 0;font-size:14px}
 .note.iron{border-color:var(--iron);background:var(--iron-soft)}
 .note.water{border-color:var(--water);background:var(--water-soft)}
@@ -187,13 +200,18 @@ const DISHES=[
  {id:39,t:"X",n:"Печёная груша с кардамоном и йогуртом",k:130,p:2,tags:["dairy","bake"],ing:[["Груши",1,"шт","fruit"],["Греческий йогурт 2 %",30,"г","dairy"]]},
  {id:40,t:"X",n:"Тыквенный пудинг с творогом",k:180,p:12,tags:["dairy","egg","bake"],ing:[["Тыква",100,"г","veg"],["Творог 5 %",50,"г","dairy"],["Яйца",0.5,"шт","dairy"]]},
 ];
+const HOW={1:"Творог, яйцо и муку взбить, яблоко кубиками, корица. Форму смазать, 25 мин при 180 °C.",2:"Яйца взбить, добавить черри, нарезанный сельдерей, фету и орегано. В форму, 15 мин при 180 °C.",3:"Творог выложить, сверху ломтики хурмы, корица, семечки.",4:"Шпинат припустить, разложить гнёздами, в каждое яйцо, фета сверху. 12 мин при 180 °C.",5:"Тыкву запечь кубиками 25 мин при 200 °C, смешать с творогом, мёдом, корицей.",6:"Творог, яйцо, муку и ваниль смешать, сформовать, на пергамент. 20 мин при 180 °C.",7:"Мангольд припустить, яйца сверху, фета, мускат. 12 мин при 180 °C. Творог с укропом рядом.",8:"Индейку нарезать мелко, обжарить 3 мин, залить яйцами с перцем. В духовке 12 мин при 180 °C.",9:"Гречку отварить, яйцо пашот 3 мин в воде с уксусом, зелень сверху.",10:"Хлопья залить кипятком на 5 мин, ягоды и миндаль сверху.",11:"Грудку в тимьяне и паприке с морковью и сельдереем на противень, 25 мин при 200 °C. Киноа и чечевицу отварить, смешать.",12:"Говядину натереть чесноком, розмарином и зирой. 10 мин при 220 °C, потом 25 мин при 170 °C. Свёклу запечь в фольге 60 мин.",13:"Индейку, тыкву и морковь с шалфеем запекать вместе 30 мин при 190 °C. Булгур отварить.",14:"Кальмары очистить, с чесноком и паприкой — 8–10 мин при 220 °C, не дольше. Чечевицу отварить, смешать со свёклой и сельдереем.",15:"Фарш с луком, кинзой, зирой и кориандром, котлеты на пергамент, 20 мин при 200 °C. Овощи запечь рядом.",16:"Окуня надрезать, в брюшко укроп и чеснок, 25 мин при 200 °C. Морковь натереть, добавить сельдерей и гранат.",17:"Баранину натереть розмарином, чесноком, зирой, кориандром. С сельдереем и морковью 40–50 мин при 180 °C.",18:"Баклажаны кружками посолить, промокнуть. С рыбой и нутом на противень, 20 мин при 200 °C.",19:"Бёдра с луком и помидорами в форму, 30 мин при 200 °C, фасоль добавить за 10 мин до конца.",20:"Индейку кубиками, чечевицу, морковь и сельдерей варить 25 мин, зира и лавровый лист.",21:"Йогурт с семечками.",22:"Творог с хурмой, щепотка кардамона.",23:"Йогурт, миндаль, яблоко дольками.",24:"Йогурт с зёрнами граната.",25:"Йогурт отдельно, хумус с палочками сельдерея и моркови.",26:"Яйца сварить 8 мин, посыпать паприкой и семечками.",27:"Хумус с палочками моркови и ломтиками огурца.",28:"Нут обсушить, с паприкой и маслом 25 мин при 200 °C до хруста.",29:"Скумбрию с фенхелем и перцем, баклажаны и помидоры рядом, 20 мин при 200 °C.",30:"Мидии промыть, выбросить открытые. С чесноком и петрушкой под фольгой 12 мин при 200 °C, не раскрывшиеся выбросить.",31:"Сардины с чесноком и орегано 15 мин при 200 °C. Фасоль прогреть с помидорами и зирой.",32:"Грудку с чесноком и тимьяном, баклажан кружками, 25 мин при 200 °C.",33:"Сёмгу смазать горчицей, укроп сверху, 12–15 мин при 200 °C. Киноа отварить, огурцы с сельдереем.",34:"Креветки с чесноком, паприкой и кинзой 8 мин при 220 °C. Нут прогреть, овощи запечь.",35:"Хамсу разложить веером, присыпать кукурузной мукой, 15 мин при 200 °C. Чечевицу отварить, свёклу запечь.",36:"Индейку кусочками с брокколи и куркумой 25 мин при 200 °C. Булгур отварить.",37:"Говядину кубиками обжарить 5 мин, добавить сельдерей, морковь, лук, тушить 60 мин под крышкой.",38:"Яблоко без сердцевины, внутрь мёд, корица и орех. 30 мин при 180 °C.",39:"Грушу пополам, кардамон и корица, 25 мин при 190 °C. Подавать с йогуртом.",40:"Тыкву запечь, пробить с творогом, яйцом и корицей, в формочки, 20 мин при 180 °C."};
+const FLAGS={iron:{l:"Низкий ферритин",d:"гемовое железо каждый день, молочное отдельно от мяса"},lipids:{l:"Высокий холестерин",d:"меньше насыщенных жиров, больше рыбы и клетчатки"},bladder:{l:"Частые позывы",d:"вода равномерно до 19:00, меньше томатов и кислого"},glucose:{l:"Повышенный сахар",d:"без десертов и мёда, больше белка и клетчатки"},bp:{l:"Повышенное давление",d:"меньше соли: фета, квашеное, копчёное — реже"},gut:{l:"Чувствительное пищеварение",d:"бобовые и квашеное — реже и мелкими порциями"},gout:{l:"Повышенная мочевая кислота",d:"меньше красного мяса, субпродуктов и мелкой рыбы"},vitd:{l:"Низкий витамин D",d:"жирная рыба и яйца чаще"}};
+const SALTY=new Set([2,4,7,11,12,15,17,19,25,31,32]);
+const PURINE=new Set([12,15,17,29,30,31,34,35,37]);
+const FATTYFISH=new Set([29,31,33,35]);
 const PROTEIN_GROUPS={dairy:"Творог, йогурт, сыр",egg:"Яйца",poultry:"Курица, индейка",beef:"Говядина",lamb:"Баранина",fish:"Рыба",seafood:"Морепродукты",legume:"Бобовые"};
 const AVOID={oats:"Овсянка",gluten:"Глютен (булгур, хлеб)",nuts:"Орехи",tomato:"Помидоры"};
 const MEALS={B:"Завтрак",L:"Обед",S:"Перекус",D:"Ужин",X:"Десерт"};
 const DAYS=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
 const DEMO={name:"Демо",sex:"f",age:42,height:166,weight:63,act:1.375,goal:"lose",ppk:1.6,
   kcalO:1650,protO:126,waterO:1750,allow:{dairy:1,egg:1,poultry:1,beef:1,lamb:1,fish:1,seafood:1,legume:1},
-  avoid:{oats:1},lambMax:1,desserts:2,flags:{iron:1,bladder:1,lipids:1},demo:true};
+  avoid:{oats:1},likes:[],avoidCustom:[],limits:{lamb:1},desserts:2,flags:{iron:1,bladder:1,lipids:1},flagsOther:"",demo:true};
 
 /* ===================== STATE ===================== */
 const KEY="ration-proto-v1";
@@ -215,18 +233,27 @@ function targets(p){
   if(p.flags.bladder)t.water=Math.max(1500,Math.min(t.water,2000));
   t.water=Math.max(1200,t.water); return t;
 }
+function stem(w){w=String(w).toLowerCase().trim();return w.length>4?w.slice(0,w.length-2):w}
+function textOf(d){return (d.n+" "+d.ing.map(i=>i[0]).join(" ")).toLowerCase()}
 function allowed(d,p){
   for(const tag of d.tags){ if(PROTEIN_GROUPS[tag]&&!p.allow[tag])return false; if(AVOID[tag]&&p.avoid[tag])return false; }
+  const tx=textOf(d);for(const w of (p.avoidCustom||[])){const st=stem(w);if(st.length>=3&&tx.includes(st))return false}
+  if(p.flags.glucose&&d.t==="X")return false;
   return true;
 }
+function likeBonus(d,p){const tx=textOf(d);let b=0;for(const w of (p.likes||[])){const st=stem(w);if(st.length>=3&&tx.includes(st))b+=0.5}return b}
+function catOf(d){if(d.t==="X")return"dessert";if(d.tags.includes("fish")||d.tags.includes("seafood"))return"fish";if(d.tags.includes("beef")||d.tags.includes("lamb"))return"meat";if(d.tags.includes("poultry"))return"poultry";if(d.tags.includes("legume"))return"legume";return"dairy"}
+const GLYPH={fish:'<svg viewBox="0 0 24 24"><path d="M3 12c3-4 7-6 11-6 2 0 4 1 6 3l2 3-2 3c-2 2-4 3-6 3-4 0-8-2-11-6z"/><path d="M3 12l-1-4 4 2M3 12l-1 4 4-2"/><circle cx="16" cy="11" r=".8"/></svg>',meat:'<svg viewBox="0 0 24 24"><path d="M14 4a6 6 0 0 1 6 6c0 4-4 6-8 6H8L4 20l1-5c-1-2-1-5 1-7a6 6 0 0 1 8-4z"/><circle cx="13" cy="10" r="2"/></svg>',poultry:'<svg viewBox="0 0 24 24"><path d="M6 14c0-4 3-8 8-8 3 0 5 2 5 4 0 1-1 2-2 2l-2 1v2a5 5 0 0 1-5 5H8l-2-2z"/><path d="M17 8l2-2"/></svg>',legume:'<svg viewBox="0 0 24 24"><path d="M4 14c0-5 4-9 9-9h7c0 7-5 12-12 12-2 0-4-1-4-3z"/><circle cx="9" cy="13" r="1"/><circle cx="13" cy="11" r="1"/><circle cx="16" cy="9" r="1"/></svg>',dairy:'<svg viewBox="0 0 24 24"><path d="M8 3h8l1 4v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V7z"/><path d="M7 11h10"/></svg>',dessert:'<svg viewBox="0 0 24 24"><path d="M12 4v3"/><path d="M12 7c4 0 7 2 7 5-2 1-3 4-3 8H8c0-4-1-7-3-8 0-3 3-5 7-5z"/></svg>'};
+function thumb(d,cls){const c=catOf(d);return `<div class="thumb ${c} ${cls||""}">${d.img?`<img src="${esc(d.img)}" alt="">`:GLYPH[c]}</div>`}
 function rng(seed){let s=seed%2147483647;if(s<=0)s+=2147483646;return()=>(s=s*16807%2147483647)/2147483647}
 function genWeek(p,seed){
-  const r=rng(seed||Date.now());const used={};let lamb=0;const days=[];
+  const r=rng(seed||Date.now());const used={};const cnt={};const days=[];const lim=p.limits||{};
+  const overLimit=x=>x.tags.some(t=>lim[t]>0&&(cnt[t]||0)>=lim[t]);
   const dessertDays=pickDessertDays(p.desserts||0);
   for(let d=0;d<7;d++){
     const prev=days[d-1];const m={};let hemeToday=false;
     for(const t of ["B","L","S","D"]){
-      const pool=DISHES.filter(x=>x.t===t&&allowed(x,p)&&!(x.tags.includes("lamb")&&lamb>=(p.lambMax??1)));
+      const pool=DISHES.filter(x=>x.t===t&&allowed(x,p)&&!overLimit(x));
       if(!pool.length){m[t]=null;continue}
       let best=null,bs=-1e9;
       for(const x of pool){
@@ -234,12 +261,16 @@ function genWeek(p,seed){
         if(p.flags.iron){ if(x.iron==="heme")s+=t==="D"&&!hemeToday?1.0:0.5; if(x.iron==="plant")s+=0.2; if(t==="D"&&x.tags.includes("dairy"))s-=1; }
         if(p.flags.bladder&&x.tags.includes("tomato"))s-=0.45;
         if(p.flags.lipids&&x.sat)s-=0.5;
-        if(x.tags.includes("lamb"))s-=0.3;
+        if(p.flags.bp&&SALTY.has(x.id))s-=0.5;
+        if(p.flags.gut&&(x.tags.includes("legume")||SALTY.has(x.id)))s-=0.4;
+        if(p.flags.gout&&PURINE.has(x.id))s-=0.8;
+        if(p.flags.vitd&&(FATTYFISH.has(x.id)||x.tags.includes("egg")))s+=0.4;
+        s+=likeBonus(x,p);
         if((t==="L"||t==="D")&&x.p<30)s-=0.6;
         s-=(used[x.id]||0)*0.9; if(prev&&prev.m[t]===x.id)s-=1.5;
         if(s>bs){bs=s;best=x}
       }
-      m[t]=best.id;used[best.id]=(used[best.id]||0)+1; if(best.tags.includes("lamb"))lamb++; if(best.iron==="heme")hemeToday=true;
+      m[t]=best.id;used[best.id]=(used[best.id]||0)+1; best.tags.forEach(tg=>cnt[tg]=(cnt[tg]||0)+1); if(best.iron==="heme")hemeToday=true;
     }
     if(dessertDays.includes(d)){const xs=DISHES.filter(x=>x.t==="X"&&allowed(x,p));if(xs.length)m.X=xs[Math.floor(r()*xs.length)].id}
     days.push({m});
@@ -255,7 +286,8 @@ function dish(id){return DISHES.find(x=>x.id===id)}
 function portion(d,f,k){return d.t==="X"?d[k]:Math.round(d[k]*f)}
 function dayTotals(day){let P=0,K=0;for(const k in day.m){const x=dish(day.m[k]);if(x){P+=portion(x,day.f,"p");K+=portion(x,day.f,"k")}}return{P,K}}
 function swap(dIdx,t){const p=S.profile,day=S.week.days[dIdx];const used={};S.week.days.forEach(d=>{for(const k in d.m)used[d.m[k]]=(used[d.m[k]]||0)+1});
-  const pool=DISHES.filter(x=>x.t===t&&allowed(x,p)&&x.id!==day.m[t]).sort((a,b)=>(used[a.id]||0)-(used[b.id]||0)||Math.random()-0.5);
+  const cnt={};S.week.days.forEach((d,i)=>{if(i===dIdx)return;for(const k in d.m){const x=dish(d.m[k]);if(x)x.tags.forEach(tg=>cnt[tg]=(cnt[tg]||0)+1)}});const lim=p.limits||{};
+  const pool=DISHES.filter(x=>x.t===t&&allowed(x,p)&&x.id!==day.m[t]&&!x.tags.some(tg=>lim[tg]>0&&(cnt[tg]||0)>=lim[tg])).sort((a,b)=>(used[a.id]||0)-(used[b.id]||0)||Math.random()-0.5);
   if(!pool.length)return toast("Нет альтернатив");day.m[t]=pool[0].id;scaleWeek(S.week,p);save();render()}
 function shopping(){const agg={};S.week.days.forEach(d=>{for(const k in d.m){const x=dish(d.m[k]);if(!x)continue;const f=x.t==="X"?1:d.f;x.ing.forEach(([n,q,u,c])=>{const key=n+"|"+u+"|"+c;agg[key]=agg[key]||{n,u,c,q:0};agg[key].q+=q*f})}});
   const byCat={};Object.values(agg).forEach(i=>{i.q=i.u==="шт"||i.u==="зубчика"||i.u==="ломтик"?Math.ceil(i.q):Math.round(i.q/10)*10||10;(byCat[i.c]=byCat[i.c]||[]).push(i)});
@@ -272,9 +304,9 @@ function head(title,sub){return `<header class="top"><h1>${title}</h1><span clas
 function viewToday(){const p=S.profile,t=targets(p),day=S.week.days[dow()],lg=S.log[todayKey()]||{eaten:{},water:0};
   let eP=0,eK=0;const rows=["B","L","S","D","X"].filter(k=>day.m[k]).map(k=>{const x=dish(day.m[k]),on=!!lg.eaten[k];const pp=portion(x,day.f,"p"),kk=portion(x,day.f,"k");if(on){eP+=pp;eK+=kk}
     const tag=x.iron==="heme"?'<span class="tag">железо</span>':x.iron==="plant"?'<span class="tag plant">бобовые</span>':x.tags.includes("dairy")&&(k==="B"||k==="S")?'<span class="tag dairy">молочное</span>':"";
-    return `<div class="meal ${on?"on":""}"><div class="chk ${on?"on":""}" data-eat="${k}" role="checkbox" aria-checked="${on}" tabindex="0">${on?"✓":""}</div><div class="grow"><div class="type">${MEALS[k]}</div><div class="name">${esc(x.n)}</div><div class="nums"><span>${pp} г белка</span><span>${kk} ккал</span>${tag}</div></div></div>`}).join("");
+    return `<div class="meal ${on?"on":""}"><div class="chk ${on?"on":""}" data-eat="${k}" role="checkbox" aria-checked="${on}" tabindex="0">${on?"✓":""}</div>${thumb(x)}<div class="grow" data-open="${x.id}:${day.f}" style="cursor:pointer"><div class="type">${MEALS[k]}</div><div class="name">${esc(x.n)}</div><div class="nums"><span>${pp} г белка</span><span>${kk} ккал</span>${tag}</div></div></div>`}).join("");
   const tot=dayTotals(day);const slots=waterSlots(t,p);const now=new Date().getHours()+new Date().getMinutes()/60;const next=slots.find(s=>s.h>now);
-  const notes=[];if(p.flags.iron)notes.push(`<div class="note iron">Железный день: молочное только утром и на перекус, к обеду и ужину — гранат, перец или квашеная капуста, чай через час после еды.</div>`);
+  const notes=[];Object.keys(FLAGS).forEach(k=>{if(p.flags[k]&&!["iron","bladder"].includes(k))notes.push(`<div class="note">${FLAGS[k].l}: ${FLAGS[k].d}.</div>`)});if(p.flags.iron)notes.push(`<div class="note iron">Железный день: молочное только утром и на перекус, к обеду и ужину — гранат, перец или квашеная капуста, чай через час после еды.</div>`);
   if(p.flags.bladder)notes.push(`<div class="note water">Вода по 200–250 мл каждые 1,5–2 часа, последний стакан до 19:00. Без кофе, газировки и острого.</div>`);
   return head("Сегодня",DAYS[dow()]+", "+new Date().toLocaleDateString("ru-RU",{day:"numeric",month:"long"}))+`
   <div class="card stack">
@@ -288,7 +320,7 @@ function viewToday(){const p=S.profile,t=targets(p),day=S.week.days[dow()],lg=S.
   ${notes.length?`<h2>Правила дня</h2><div class="stack">${notes.join("")}</div>`:""}`}
 
 function viewWeek(){const p=S.profile,t=targets(p);const days=S.week.days.map((d,i)=>{const tot=dayTotals(d);
-  const lines=["B","L","S","D","X"].filter(k=>d.m[k]).map(k=>{const x=dish(d.m[k]);return `<div class="line"><span class="t">${k==="X"?"Д":MEALS[k][0]}</span><span class="n">${esc(x.n)}</span><span class="muted small">${portion(x,d.f,"p")} г</span><button class="sm ghost" data-swap="${i}:${k}" aria-label="Заменить">↻</button></div>`}).join("");
+  const lines=["B","L","S","D","X"].filter(k=>d.m[k]).map(k=>{const x=dish(d.m[k]);return `<div class="line"><span class="t">${k==="X"?"Д":MEALS[k][0]}</span>${thumb(x,"sm")}<span class="n" data-open="${x.id}:${d.f}" style="cursor:pointer">${esc(x.n)}</span><span class="muted small">${portion(x,d.f,"p")} г</span><button class="sm ghost" data-swap="${i}:${k}" aria-label="Заменить">↻</button></div>`}).join("");
   return `<div class="day"><div class="dh"><b>${DAYS[i]}${i===dow()?" · сегодня":""}</b><span>${tot.P} г · ${tot.K} ккал</span></div>${lines}</div>`}).join("");
   return head("Неделя",`цель ${t.prot} г · ${t.kcal} ккал`)+`<div class="card">${days}</div>
   <div class="row" style="margin-top:12px"><button class="primary grow" id="regen">Собрать новую неделю</button></div>
@@ -308,21 +340,22 @@ function viewShop(){const by=shopping();const order=["meat","dairy","grain","veg
 function viewProfile(){const p=S.profile,t=targets(p);
   return head("Профиль",p.name)+`<div class="card stack">
     <div class="grid2"><div><div class="small muted">Калории</div><div class="big">${t.kcal}</div></div><div><div class="small muted">Белок</div><div class="big">${t.prot} г</div></div><div><div class="small muted">Вода</div><div class="big">${t.water/1000} л</div></div><div><div class="small muted">Базовый обмен</div><div class="big">${t.bmr}</div></div></div>
-    <div class="small muted">${p.sex==="f"?"Ж":"М"}, ${p.age} лет, ${p.height} см, ${p.weight} кг · ${({lose:"снижение веса",keep:"поддержание",gain:"набор"})[p.goal]} · ${Object.keys(p.flags).filter(k=>p.flags[k]).map(k=>({iron:"железо",bladder:"частые позывы",lipids:"холестерин"})[k]).join(", ")||"без особых режимов"}</div>
+    <div class="small muted">${p.sex==="f"?"Ж":"М"}, ${p.age} лет, ${p.height} см, ${p.weight} кг · ${({lose:"снижение веса",keep:"поддержание",gain:"набор"})[p.goal]} · ${Object.keys(p.flags).filter(k=>p.flags[k]&&FLAGS[k]).map(k=>FLAGS[k].l.toLowerCase()).join(", ")||"без особых режимов"}${p.flagsOther?" · "+esc(p.flagsOther):""}</div>
     <button class="primary" id="edit">Изменить параметры</button>
     ${p.demo?'<div class="note">Это демо-профиль с примерными данными. Заполните свои — нормы и меню пересчитаются.</div>':""}
   </div>
   <h2>Как считаем</h2><div class="card stack small">
     <div>Базовый обмен — по формуле Миффлина–Сан Жеора, затем коэффициент активности и поправка на цель (−15 % / 0 / +10 %).</div>
     <div>Белок — ${p.ppk} г на кг веса; вода — 30 мл на кг (в режиме частых позывов ограничена 1,5–2 л и распределена до 19:00).</div>
-    <div>Меню собирается из базы ${DISHES.length} блюд с учётом исключений, лимита баранины (${p.lambMax} в неделю), ${p.desserts} десертных дней и режимов: железо — гемовое железо каждый день и молочное отдельно от мяса; холестерин — меньше насыщенных жиров; частые позывы — меньше томатов и кислого.</div>
+    <div>Меню собирается из базы ${DISHES.length} блюд: исключения и аллергены убирают блюдо целиком, любимые продукты получают приоритет, у каждого источника белка свой лимит в неделю (${Object.entries(p.limits||{}).filter(([k,v])=>v>0).map(([k,v])=>PROTEIN_GROUPS[k].split(",")[0].toLowerCase()+" "+v).join(", ")||"без лимитов"}), ${p.desserts} десертных дней.</div>
+    <div>Режимы: ${Object.keys(FLAGS).filter(k=>p.flags[k]).map(k=>FLAGS[k].l.toLowerCase()+" — "+FLAGS[k].d).join("; ")||"не выбраны"}.${p.flagsOther?" «"+esc(p.flagsOther)+"» записано в профиль, на подбор пока не влияет.":""}</div>
   </div>
   <div class="row" style="margin-top:12px"><button class="ghost grow" id="reset">Сбросить всё</button></div>`}
 
 /* ===================== ONBOARDING ===================== */
 function viewOnboard(){const p=S.draft||(S.profile?JSON.parse(JSON.stringify(S.profile)):JSON.parse(JSON.stringify(DEMO)));S.draft=p;const step=S.ob||1;
   const steps=`<div class="steps">${[1,2,3].map(i=>`<i class="${i<=step?"on":""}"></i>`).join("")}</div>`;
-  if(step===1)return head("Рацион","шаг 1 из 3 · о вас")+steps+`<div class="card stack">
+  if(step===1)return head("LifeBite","шаг 1 из 3 · о вас")+steps+`<div class="card stack">
     <label class="f">Имя<input id="f-name" value="${esc(p.name)}"></label>
     <div class="grid2"><label class="f">Пол<select id="f-sex"><option value="f" ${p.sex==="f"?"selected":""}>Женский</option><option value="m" ${p.sex==="m"?"selected":""}>Мужской</option></select></label>
     <label class="f">Возраст<input id="f-age" type="number" inputmode="numeric" value="${p.age}"></label>
@@ -331,33 +364,46 @@ function viewOnboard(){const p=S.draft||(S.profile?JSON.parse(JSON.stringify(S.p
     <label class="f">Активность<select id="f-act">${[[1.2,"Сидячая"],[1.375,"Лёгкая: прогулки, 1–3 тренировки"],[1.55,"Средняя: 3–5 тренировок"],[1.725,"Высокая: 6–7 тренировок"]].map(([v,l])=>`<option value="${v}" ${+p.act===v?"selected":""}>${l}</option>`).join("")}</select></label>
     <label class="f">Цель<select id="f-goal">${[["lose","Снизить вес"],["keep","Поддерживать"],["gain","Набрать мышцы"]].map(([v,l])=>`<option value="${v}" ${p.goal===v?"selected":""}>${l}</option>`).join("")}</select></label>
     <button class="primary" id="next">Дальше</button></div>`;
-  if(step===2)return head("Рацион","шаг 2 из 3 · что едите")+steps+`<div class="card stack">
-    <div class="small muted">Источники белка</div><div class="chips">${Object.entries(PROTEIN_GROUPS).map(([k,l])=>`<label class="chip ${p.allow[k]?"on":""}"><input type="checkbox" data-allow="${k}" ${p.allow[k]?"checked":""}>${l}</label>`).join("")}</div>
-    <div class="small muted">Исключить</div><div class="chips">${Object.entries(AVOID).map(([k,l])=>`<label class="chip red ${p.avoid[k]?"on":""}"><input type="checkbox" data-avoid="${k}" ${p.avoid[k]?"checked":""}>${l}</label>`).join("")}</div>
-    <div class="grid2"><label class="f">Баранина, раз в неделю<input id="f-lamb" type="number" inputmode="numeric" min="0" max="7" value="${p.lambMax}"></label><label class="f">Десертных дней<input id="f-des" type="number" inputmode="numeric" min="0" max="7" value="${p.desserts}"></label></div>
+  if(step===2)return head("LifeBite","шаг 2 из 3 · что едите")+steps+`<div class="card stack">
+    <div class="small muted">Источники белка</div><div class="chips">${Object.entries(PROTEIN_GROUPS).map(([k,l])=>`<label class="chip ${p.allow[k]?"on":""}"><input type="checkbox" data-allow="${k}" ${p.allow[k]?"checked":""}>${l}</label>`).join("")}${(p.likes||[]).map((w,i)=>`<span class="chip on">${esc(w)} <button class="ghost sm" data-dellike="${i}" aria-label="Убрать" style="min-height:0;padding:0 2px;border:0">×</button></span>`).join("")}</div>
+    <div class="addrow"><input id="f-like" placeholder="Любимый продукт: тунец, кефир, грибы…"><button id="addlike">Добавить</button></div>
+    <div class="small muted">Исключить — не люблю или аллергия</div><div class="chips">${Object.entries(AVOID).map(([k,l])=>`<label class="chip red ${p.avoid[k]?"on":""}"><input type="checkbox" data-avoid="${k}" ${p.avoid[k]?"checked":""}>${l}</label>`).join("")}${(p.avoidCustom||[]).map((w,i)=>`<span class="chip red on">${esc(w)} <button class="ghost sm" data-delavoid="${i}" aria-label="Убрать" style="min-height:0;padding:0 2px;border:0">×</button></span>`).join("")}</div>
+    <div class="addrow"><input id="f-avoid" placeholder="Например: креветки, мёд, кинза"><button id="addavoid">Добавить</button></div>
+    <div class="small muted">Не чаще, чем раз в неделю (0 — без лимита)</div><div>${Object.entries(PROTEIN_GROUPS).filter(([k])=>p.allow[k]).map(([k,l])=>`<div class="lim"><span class="grow">${l}</span><input type="number" inputmode="numeric" min="0" max="14" data-lim="${k}" value="${(p.limits||{})[k]||0}"></div>`).join("")}</div>
+    <label class="f">Десертных дней в неделю<input id="f-des" type="number" inputmode="numeric" min="0" max="7" value="${p.desserts}"></label>
     <div class="row"><button class="ghost" id="back">Назад</button><button class="primary grow" id="next">Дальше</button></div></div>`;
   const t=targets(Object.assign({},p,{kcalO:p.kcalO,protO:p.protO,waterO:p.waterO}));const auto=targets(Object.assign({},p,{kcalO:0,protO:0,waterO:0}));
-  return head("Рацион","шаг 3 из 3 · нормы и режимы")+steps+`<div class="card stack">
-    <div class="small muted">Особенности (меняют правила подбора)</div><div class="chips">
-      <label class="chip ${p.flags.iron?"on":""}"><input type="checkbox" data-flag="iron" ${p.flags.iron?"checked":""}>Низкий ферритин</label>
-      <label class="chip ${p.flags.lipids?"on":""}"><input type="checkbox" data-flag="lipids" ${p.flags.lipids?"checked":""}>Высокий холестерин</label>
-      <label class="chip ${p.flags.bladder?"on":""}"><input type="checkbox" data-flag="bladder" ${p.flags.bladder?"checked":""}>Частые позывы</label></div>
+  return head("LifeBite","шаг 3 из 3 · нормы и режимы")+steps+`<div class="card stack">
+    <div class="small muted">Особенности — каждая меняет правила подбора</div><div class="chips">${Object.entries(FLAGS).map(([k,f])=>`<label class="chip ${p.flags[k]?"on":""}" title="${f.d}"><input type="checkbox" data-flag="${k}" ${p.flags[k]?"checked":""}>${f.l}</label>`).join("")}</div>
+    <label class="f">Другое (запишем в профиль)<input id="f-other" placeholder="Например: беременность, гастрит, спортивные цели" value="${esc(p.flagsOther||"")}"></label>
     <div class="small muted">Нормы: расчётные ${auto.kcal} ккал · ${auto.prot} г белка · ${auto.water} мл. Впишите свои, если их дал врач или нутрициолог.</div>
     <div class="grid2"><label class="f">Калории<input id="f-kcal" type="number" inputmode="numeric" placeholder="${auto.kcal}" value="${p.kcalO||""}"></label><label class="f">Белок, г<input id="f-prot" type="number" inputmode="numeric" placeholder="${auto.prot}" value="${p.protO||""}"></label>
     <label class="f">Вода, мл<input id="f-water" type="number" inputmode="numeric" placeholder="${auto.water}" value="${p.waterO||""}"></label><label class="f">Белок, г/кг (авто)<input id="f-ppk" type="number" inputmode="decimal" step="0.1" value="${p.ppk}"></label></div>
     <div class="row"><button class="ghost" id="back">Назад</button><button class="primary grow" id="finish">Собрать меню</button></div></div>`}
 function readStep(){const p=S.draft,v=id=>$(id)&&$(id).value;if(S.ob===1){p.name=v("#f-name")||"Вы";p.sex=v("#f-sex");p.age=+v("#f-age")||30;p.height=+v("#f-height")||170;p.weight=+v("#f-weight")||70;p.act=+v("#f-act");p.goal=v("#f-goal");p.demo=false}
-  if(S.ob===2){p.lambMax=+v("#f-lamb");p.desserts=+v("#f-des")}
-  if(S.ob===3){p.kcalO=+v("#f-kcal")||0;p.protO=+v("#f-prot")||0;p.waterO=+v("#f-water")||0;p.ppk=+v("#f-ppk")||1.6}}
+  if(S.ob===2){p.desserts=+v("#f-des");p.limits=p.limits||{};document.querySelectorAll("[data-lim]").forEach(i=>p.limits[i.dataset.lim]=+i.value||0)}
+  if(S.ob===3){p.kcalO=+v("#f-kcal")||0;p.protO=+v("#f-prot")||0;p.waterO=+v("#f-water")||0;p.ppk=+v("#f-ppk")||1.6;p.flagsOther=(v("#f-other")||"").trim()}}
 function bindOnboard(){const nx=$("#next"),bk=$("#back"),fin=$("#finish");
   if(nx)nx.onclick=()=>{readStep();S.ob++;render()};if(bk)bk.onclick=()=>{readStep();S.ob--;render()};
-  document.querySelectorAll("[data-allow]").forEach(c=>c.onchange=()=>{S.draft.allow[c.dataset.allow]=c.checked?1:0;c.parentElement.classList.toggle("on",c.checked)});
+  document.querySelectorAll("[data-allow]").forEach(c=>c.onchange=()=>{S.draft.allow[c.dataset.allow]=c.checked?1:0;readStep();render()});
   document.querySelectorAll("[data-avoid]").forEach(c=>c.onchange=()=>{S.draft.avoid[c.dataset.avoid]=c.checked?1:0;c.parentElement.classList.toggle("on",c.checked)});
   document.querySelectorAll("[data-flag]").forEach(c=>c.onchange=()=>{S.draft.flags[c.dataset.flag]=c.checked?1:0;c.parentElement.classList.toggle("on",c.checked)});
+  const addTo=(key,inp)=>{const w=(inp.value||"").trim();if(w.length<2)return toast("Введите название");S.draft[key]=S.draft[key]||[];if(!S.draft[key].includes(w))S.draft[key].push(w);readStep();render()};
+  const al=$("#addlike"),aa=$("#addavoid");if(al)al.onclick=()=>addTo("likes",$("#f-like"));if(aa)aa.onclick=()=>addTo("avoidCustom",$("#f-avoid"));
+  ["#f-like","#f-avoid"].forEach(id=>{const i=$(id);if(i)i.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();addTo(id==="#f-like"?"likes":"avoidCustom",i)}}});
+  document.querySelectorAll("[data-dellike]").forEach(b=>b.onclick=()=>{S.draft.likes.splice(+b.dataset.dellike,1);readStep();render()});
+  document.querySelectorAll("[data-delavoid]").forEach(b=>b.onclick=()=>{S.draft.avoidCustom.splice(+b.dataset.delavoid,1);readStep();render()});
   if(fin)fin.onclick=()=>{readStep();if(!Object.values(S.draft.allow).some(Boolean))return toast("Выберите хотя бы один источник белка");S.profile=S.draft;S.draft=null;S.ob=0;S.week=genWeek(S.profile,Date.now());S.shop={};S.tab="today";save();render();toast("Меню на неделю готово")}}
 
+function openDish(id,f){const d=dish(id);if(!d)return;const ff=d.t==="X"?1:+f||1;const bg=document.createElement("div");bg.className="sheet-bg";
+  bg.innerHTML=`<div class="sheet" role="dialog" aria-label="${esc(d.n)}">${thumb(d,"hero")}<h3>${esc(d.n)}</h3><div class="nums small muted">${portion(d,ff,"p")} г белка · ${portion(d,ff,"k")} ккал · ${MEALS[d.t]}</div>
+  <h2>Состав на порцию</h2>${d.ing.map(([n,q,u])=>`<div class="ing"><span>${esc(n)}</span><span>${(u==="шт"||u==="зубчика"||u==="ломтик")?Math.round(q*ff*2)/2:Math.round(q*ff/5)*5} ${u}</span></div>`).join("")}
+  <h2>Как готовить</h2><p style="margin:0">${esc(HOW[d.id]||"")}</p>
+  <div class="row" style="margin-top:14px"><button class="primary grow" id="closeSheet">Закрыть</button></div></div>`;
+  document.body.appendChild(bg);const close=()=>bg.remove();bg.onclick=e=>{if(e.target===bg)close()};bg.querySelector("#closeSheet").onclick=close}
 /* ===================== BIND ===================== */
 function bind(){
+  document.querySelectorAll("[data-open]").forEach(el=>el.onclick=()=>{const [id,f]=el.dataset.open.split(":");openDish(+id,f)});
   document.querySelectorAll("[data-eat]").forEach(el=>{const h=()=>{const k=todayKey();S.log[k]=S.log[k]||{eaten:{},water:0};S.log[k].eaten[el.dataset.eat]=!S.log[k].eaten[el.dataset.eat];save();render()};el.onclick=h;el.onkeydown=e=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();h()}}});
   document.querySelectorAll("[data-water]").forEach(b=>b.onclick=()=>{const k=todayKey();S.log[k]=S.log[k]||{eaten:{},water:0};S.log[k].water=Math.max(0,S.log[k].water+(+b.dataset.water));save();render()});
   document.querySelectorAll("[data-tab-go]").forEach(b=>b.onclick=()=>{S.tab=b.dataset.tabGo;save();render()});
@@ -371,11 +417,12 @@ document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>{S.tab=b.d
 
 /* ===================== BOOT ===================== */
 load();
+if(S.profile){const p=S.profile;p.likes=p.likes||[];p.avoidCustom=p.avoidCustom||[];p.limits=p.limits||{lamb:p.lambMax??1};p.flagsOther=p.flagsOther||""}
 if(!S.profile){S.profile=JSON.parse(JSON.stringify(DEMO));S.week=genWeek(S.profile,20261015);S.ob=0;save()}
 if(!S.week){S.week=genWeek(S.profile,Date.now());save()}
 render();
 </script>
 
-<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>{setInterval(()=>r.update().catch(()=>{}),60*60*1000)}).catch(()=>{});let had=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had)location.reload();had=true})})}</script>
 </body>
 </html>
